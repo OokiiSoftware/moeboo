@@ -1,0 +1,16 @@
+export 'add_booru_page.dart';
+export 'add_album_page.dart';
+export 'album_page.dart';
+export 'album_collection_page.dart';
+export 'analize_page.dart';
+export 'armazenamento_page.dart';
+export 'auth_page.dart';
+export 'config_page.dart';
+export 'filtro_page.dart';
+export 'main_page.dart';
+export 'mover_album_page.dart';
+export 'post_page.dart';
+export 'reorder_page.dart';
+export 'splash_screen.dart';
+export 'store_page.dart';
+export 'wallpaper_page.dart';
