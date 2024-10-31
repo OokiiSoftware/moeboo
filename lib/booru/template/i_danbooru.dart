@@ -1,56 +1,65 @@
 import '../../model/import.dart';
 import '../import.dart';
 
-abstract class ISankaku extends ABooru {
+abstract class IDanbooru extends ABooru {
 
-  ISankaku({List<BooruOptions>? options}) :
-        super(BooruType.sankaku, options: options?..add(BooruOptions.expireLinks));
+  IDanbooru({List<BooruOptions>? options}) : super(BooruType.danbooru, options: options);
+
+
+  @override
+  Uri get countUrl => newUri('counts/posts.json');
+
+  @override
+  Uri get imageUrl => newUri('posts.json');
+
+  @override
+  Uri get tagUrl => newUri('tags.json');
+
 
   @override
   Map<String, dynamic> getPostsParams(AlbumQuery query) {
     Map<String, dynamic> params = {};
-    int limit = query.postsLimit;
 
     params['page'] = '${query.page}';
     params['tags'] = query.tags.join('+');
-    params['limit'] = '$limit';
-
+    if (query.postsLimit > 0) {
+      params['limit'] = '${query.postsLimit}';
+    }
     return params;
   }
 
   @override
   Map<String, String> getTagsParams(String tagName) {
     return {
-      'name': tagName,
+      'search[fuzzy_name_matches]': tagName,
     };
   }
 
 
   @override
   Post getPost(Map json) {
-    String temp = json['file_type'];
-    String ext = temp.split('/')[1];
-
-    List? tags = json["tags"];
-    List<String> tagsList = [];
-    tags?.forEach((item) {
-      tagsList.add(item['name_en'].replaceAll(' ', '_'));
-    });
-
     json['booruName'] = name;
-    json['file_ext'] = ext;
-    json['score'] = json['total_score'];
-    json['tags'] = tagsList.join(' ');
+    json['preview_url'] = json['preview_file_url'];
+    json['sample_url'] = json['large_file_url'];
+    json['height'] = json['image_height'];
+    json['width'] = json['image_width'];
+    json['tags'] = json['tag_string'];
+
     return Post.fromJson(json);
   }
 
   @override
-  List<Post> getPosts(List? json, {Function? onError}) {
+  List<Post> getPosts(List? json) {
     List<Post> items = [];
     if (json == null) return items;
 
     for (var item in json) {
-      items.add(getPost(item));
+      try {
+        var temp = getPost(item);
+        items.add(temp);
+      } catch(e) {
+        continue;
+      }
     }
     return items;
   }
@@ -59,10 +68,10 @@ abstract class ISankaku extends ABooru {
   Tag getTag(Map json) {
     return Tag(
       id: json['id'],
-      name: json['name_en'].replaceAll(' ', '_'),
-      count: json['count'],
+      name: json['name'],
+      count: json['post_count'],
       provider: name,
-      type: TagType.fromValue(json['type']),
+      type: TagType.fromValue(json['category']),
     );
   }
 
@@ -77,12 +86,13 @@ abstract class ISankaku extends ABooru {
     return items;
   }
 
+
   @override
   Uri pageUri(List<String> tags) {
     return Uri(
       scheme: 'https',
       host: home,
-      path: 'pt',
+      path: 'posts',
       query: 'tags=${tags.join('+')}',
     );
   }
@@ -92,7 +102,7 @@ abstract class ISankaku extends ABooru {
     return Uri(
       scheme: 'https',
       host: home,
-      path: 'pt/post/show/${hashId.toString()}',
+      path: 'posts/${hashId.toString()}',
     );
   }
 

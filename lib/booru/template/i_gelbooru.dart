@@ -11,6 +11,17 @@ abstract class IGelBooru extends ABooru {
 
   IGelBooru({super.options, BooruType? type}) : super(type ?? BooruType.gelbooru);
 
+
+  @override
+  Uri get countUrl => newUri('index.php');
+
+  @override
+  Uri get imageUrl => newUri('index.php');
+
+  @override
+  Uri get tagUrl => newUri('index.php');
+
+
   @override
   Map<String, dynamic> getPostsParams(AlbumQuery query) {
     Map<String, dynamic> params = {};
@@ -140,6 +151,7 @@ abstract class IGelBooru extends ABooru {
     );
   }
 
+
   @override
   Future<List<Post?>> findPosts({required AlbumQuery query}) async {
     Map<String, dynamic> params = getPostsParams(query);
@@ -160,35 +172,12 @@ abstract class IGelBooru extends ABooru {
     return getPosts(map['post']);
   }
 
-  @override
-  Future<List<Tag>> findTags(String? tagName) async {
-    if (tagName == null || tagName.isEmpty) return [];
-
-    Map<String, String> params = getTagsParams(tagName);
-
-    var url = createUrl(tagUrl, params: params);
-    log.d('getTagsAsync', url);
-
-    late String response;
-    if (useTagsXml) {
-      response = await getXml(url);
-    } else {
-      response = await getJson(url);
-    }
-
-    var data = jsonDecode(response);
-    if (data is List) {
-      return getTags(data);
-    }
-
-    return getTags(data['tag']);
-  }
-
 }
 
 abstract class IGelBooru2 extends IGelBooru {
 
-  IGelBooru2({super.options}) : super(type: BooruType.gelbooru2);
+  IGelBooru2({required List<BooruOptions> options}) : super(type: BooruType.gelbooru2,
+      options: options..addAll([BooruOptions.tagApiXml, BooruOptions.generalRating]));
 
   @override
   Post? getPost(Map json) {

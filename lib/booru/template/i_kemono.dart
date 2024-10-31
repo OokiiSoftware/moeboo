@@ -13,6 +13,17 @@ abstract class IKemono extends ABooru {
 
   IKemono({super.options}) : super(BooruType.kemono);
 
+
+  @override
+  Uri get countUrl => newUri('api/v1/counts/posts');
+
+  @override
+  Uri get imageUrl => newUri('api/v1/posts');
+
+  @override
+  Uri get tagUrl => newUri('api/v1/tags');
+
+
   @override
   Map<String, dynamic> getPostsParams(AlbumQuery query) {
     Map<String, dynamic> params = {};
@@ -49,7 +60,7 @@ abstract class IKemono extends ABooru {
       }
 
       int i = 1;
-      /// [{name, path}, {name, path}]
+      /// [{name, path}, {name, path}, {...}]
       List images = item['attachments'];
       for (var map in images) {
         post = _getPost(map, item, i);
@@ -60,6 +71,7 @@ abstract class IKemono extends ABooru {
         }
       }
     }
+
     return items;
   }
 
@@ -84,6 +96,7 @@ abstract class IKemono extends ABooru {
     }
     return items;
   }
+
 
   @override
   Uri pageUri(List<String> tags) {
@@ -123,9 +136,10 @@ abstract class IKemono extends ABooru {
     final id = sp[sp.length-1];
     final index = int.parse(id[id.length-1]);
 
-    url = url.replaceAll('kemono.su', 'kemono.su/api/v1');
+    url = url.replaceAll(domain, '$domain/api/v1');
     url = url.substring(0, url.length-1);
 
+    log.d(name, 'findCustomPost', 'url', url);
     final res = await getJson(Uri.parse(url));
     final map = jsonDecode(res);
 
@@ -151,8 +165,12 @@ abstract class IKemono extends ABooru {
     final sp = path.split('.');
     final ext = sp[sp.length-1];
 
-    const homePage = 'https://kemono.su';
-    final id = item['id'];
+    String id = item['id'] ?? '';
+    if (id.length > 10) {
+      id = id.substring(0, 10);
+    }
+
+    final homePage = 'https://$domain';
     final service = item['service'];
     final user = item['user'];
     final source = '$homePage/$service/user/$user/post/$id$index';

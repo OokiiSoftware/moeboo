@@ -5,6 +5,17 @@ abstract class IMoebooru extends ABooru {
 
   IMoebooru({List<BooruOptions>? options}) : super(BooruType.moeBooru, options: options);
 
+
+  @override
+  Uri get countUrl => newUri('counts/posts/index.json');
+
+  @override
+  Uri get imageUrl => newUri('post/index.json');
+
+  @override
+  Uri get tagUrl => newUri('tag/index.json');
+
+
   @override
   Map<String, dynamic> getPostsParams(AlbumQuery query) {
     Map<String, dynamic> params = {};
@@ -87,6 +98,7 @@ abstract class IMoebooru extends ABooru {
     }
     return items;
   }
+
 
   @override
   Uri pageUri(List<String> tags) {

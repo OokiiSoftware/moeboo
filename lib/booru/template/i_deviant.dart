@@ -6,6 +6,17 @@ abstract class IDeviantArt extends ABooru {
   IDeviantArt({List<BooruOptions>? options}) :
         super(BooruType.deviant, options: options?..add(BooruOptions.expireLinks));
 
+
+  @override
+  Uri get countUrl => baseUrl;
+
+  @override
+  Uri get imageUrl => baseUrl;
+
+  @override
+  Uri get tagUrl => baseUrl;
+
+
   @override
   Map<String, dynamic> getPostsParams(AlbumQuery query) {
     Map<String, dynamic> params = {};

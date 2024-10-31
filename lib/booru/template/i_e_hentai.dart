@@ -10,6 +10,17 @@ abstract class IEHentai extends ABooru {
   IEHentai({List<BooruOptions>? options}) :
         super(BooruType.ehentai, options: options?..add(BooruOptions.expireLinks));
 
+
+  @override
+  Uri get countUrl => baseUrl;
+
+  @override
+  Uri get imageUrl => baseUrl;
+
+  @override
+  Uri get tagUrl => baseUrl;
+
+
   @override
   Map<String, dynamic> getPostsParams(AlbumQuery query) {
     Map<String, dynamic> params = {};
@@ -170,6 +181,7 @@ abstract class IEHentai extends ABooru {
 
   @override
   Future<Post?> findCustomPost(String url) async {
+    log.d(name, 'findCustomPost', 'url', url);
     final res = await getJson(Uri.parse(url));
     final divImg = getElementById(res, 'img');
     final divSize = getElementById(res, 'i4');

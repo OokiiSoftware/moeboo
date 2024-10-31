@@ -5,9 +5,20 @@ import '../import.dart';
 abstract class IFapello extends ABooru {
 
   @override
-  int get firstPage => 0;
+  int get firstPage => 1;
 
   IFapello({List<BooruOptions>? options}) : super(BooruType.fapello, options: options);
+
+
+  @override
+  Uri get countUrl => baseUrl;
+
+  @override
+  Uri get imageUrl => newUri('ajax/index/page-');
+
+  @override
+  Uri get tagUrl => baseUrl;
+
 
   @override
   Map<String, dynamic> getPostsParams(AlbumQuery query) {
@@ -77,19 +88,18 @@ abstract class IFapello extends ABooru {
     return Uri(
       scheme: 'https',
       host: home,
-      path: 'posts',
-      query: 'tags=${tags.join('+')}',
+      path: 'search/${tags.join('+')}',
     );
   }
 
-  @override
-  Uri postUri(dynamic hashId) {
-    return Uri(
-      scheme: 'https',
-      host: home,
-      path: 'posts/${hashId.toString()}',
-    );
-  }
+  // @override
+  // Uri postUri(dynamic hashId) {
+  //   return Uri(
+  //     scheme: 'https',
+  //     host: home,
+  //     path: 'posts/${hashId.toString()}',
+  //   );
+  // }
 
   @override
   Future<List<Post?>> findPosts({required AlbumQuery query}) async {
@@ -97,9 +107,10 @@ abstract class IFapello extends ABooru {
 
     String path = '';
     if (query.tags.isEmpty) {
-      path = '${imageUrl.path}${query.page + 1}';
+      // path = '${imageUrl.path}${query.page + 1}';
+      path = '/ajax/index/page-${query.page}';
     } else {
-      path = '/ajax/model/${query.tags.first}/page-${query.page + 1}';
+      path = '/ajax/model/${query.tags.first}/page-${query.page}';
     }
 
     Uri temp = imageUrl.replace(path: path);

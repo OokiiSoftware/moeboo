@@ -7,6 +7,17 @@ abstract class ISex extends ABooru {
 
   ISex({List<BooruOptions>? options}) : super(BooruType.sex, options: options);
 
+
+  @override
+  Uri get countUrl => baseUrl;
+
+  @override
+  Uri get imageUrl => baseUrl;
+
+  @override
+  Uri get tagUrl => baseUrl;
+
+
   @override
   Map<String, dynamic> getPostsParams(AlbumQuery query, [bool isUser = false]) {
     Map<String, dynamic> params = {};
@@ -108,19 +119,19 @@ abstract class ISex extends ABooru {
     return Uri(
       scheme: 'https',
       host: home,
-      path: 'pt',
-      query: 'tags=${tags.join('+')}',
+      path: 'pt/videos',
+      query: 'search=${tags.join('+')}',
     );
   }
 
-  @override
-  Uri postUri(dynamic hashId) {
-    return Uri(
-      scheme: 'https',
-      host: home,
-      path: 'pt/post/show/${hashId.toString()}',
-    );
-  }
+  // @override
+  // Uri postUri(dynamic hashId) {
+  //   return Uri(
+  //     scheme: 'https',
+  //     host: home,
+  //     path: 'pt/post/show/${hashId.toString()}',
+  //   );
+  // }
 
   @override
   Future<List<Post?>> findPosts({required AlbumQuery query}) async {

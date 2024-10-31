@@ -3,8 +3,20 @@ import '../../model/import.dart';
 import '../import.dart';
 
 abstract class IArtStation extends ABooru {
+
   IArtStation({List<BooruOptions>? options}) :
         super(BooruType.artStation, options: options?..add(BooruOptions.expireLinks));
+
+
+  @override
+  Uri get countUrl => newUri('projects.json');
+
+  @override
+  Uri get imageUrl => newUri('projects.json');
+
+  @override
+  Uri get tagUrl => newUri('projects.json');
+
 
   @override
   Map<String, dynamic> getPostsParams(AlbumQuery query) {
@@ -95,6 +107,7 @@ abstract class IArtStation extends ABooru {
     return items;
   }
 
+
   @override
   Uri pageUri(List<String> tags) {
     String tag = tags.join('+');
@@ -135,4 +148,8 @@ abstract class IArtStation extends ABooru {
     return getPosts(map['data']);
   }
 
+  @override
+  Future<List<Tag>> findTags(String? tagName) {
+    throw 'O provedor não permite pesquisa por tags';
+  }
 }

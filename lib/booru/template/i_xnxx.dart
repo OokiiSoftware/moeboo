@@ -8,6 +8,17 @@ abstract class IXnxx extends ABooru {
 
   IXnxx({List<BooruOptions>? options}) : super(BooruType.xnxx, options: options);
 
+
+  @override
+  Uri get countUrl => baseUrl;
+
+  @override
+  Uri get imageUrl => baseUrl;
+
+  @override
+  Uri get tagUrl => baseUrl;
+
+
   @override
   Map<String, dynamic> getPostsParams(AlbumQuery query) {
     Map<String, dynamic> params = {};
@@ -76,8 +87,7 @@ abstract class IXnxx extends ABooru {
     return Uri(
       scheme: 'https',
       host: home,
-      path: 'posts',
-      query: 'tags=${tags.join('+')}',
+      path: 'search/${tags.join('+')}',
     );
   }
 
