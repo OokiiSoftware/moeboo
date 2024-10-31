@@ -20,4 +20,5 @@ class ArtStation extends IArtStation {
 
   @override
   int get limitedPosts => 50;
+
 }

@@ -358,10 +358,11 @@ class Post extends ChangeNotifier {
   //region metodos
 
   Future<void> refresh({bool forcePostBooru = true}) async {
-    if (booruName == EHentai.name_ || booruName == Kemono.name_) {
+    if (booruName == EHentai.name_ || booruName == Kemono.name_ || booruName == Coomer.name_) {
       await custonLoad(false);
       return;
     }
+
     Post? post;
 
     if (forcePostBooru) {

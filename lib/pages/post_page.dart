@@ -1469,7 +1469,12 @@ class _State extends State<PostPage> with SingleTickerProviderStateMixin {
   //--------------------------------------------
 
   void _onOpenLinkClick() {
-    OkiManager.i.openUrl(LinkConsert.tryConsert(_currentPost));
+    try {
+      OkiManager.i.openUrl(LinkConsert.tryConsert(_currentPost));
+    } catch(e) {
+      Log.snack('Indisponível nesse provedor', isError: true);
+      _log.e('_onOpenLinkClick', e);
+    }
   }
 
   //--------------------------------------------

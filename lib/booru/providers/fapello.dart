@@ -19,6 +19,6 @@ class Fapello extends IFapello {
   bool get isSafe => false;
 
   @override
-  int get limitedPosts => 28;
+  int get limitedPosts => 10;
 
 }

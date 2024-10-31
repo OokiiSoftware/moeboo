@@ -680,7 +680,10 @@ class Album extends ChangeNotifier implements Map<String, Album> {
     if (booru.isDeviant && tagsString.contains('user:')) {
       limit = 24;
     }
-    _noMoreResults[booruName] = newData.length < limit;
+
+    if (booru.name != Real.name_) {
+      _noMoreResults[booruName] = newData.length < limit;
+    }
 
     if (_noMoreResults[booruName]!) {
       onNoMoreResults?.call();

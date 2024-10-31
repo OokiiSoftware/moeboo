@@ -15,6 +15,23 @@ class Kemono extends IKemono {
   @override
   String get home => 'kemono.su';
 
+}
+
+/// Kemono. https://coomer.su
+class Coomer extends IKemono {
+  static const String name_ = 'Coomer';
+
+  Coomer();
+
+  @override
+  String get name => name_;
+
+  @override
+  String get domain => 'coomer.su';
+
+  @override
+  String get home => 'coomer.su';
+
   @override
   bool get isSafe => false;
 

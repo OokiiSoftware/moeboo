@@ -45,36 +45,6 @@ abstract class ABooru extends IBooru {
   }
 
   @override
-  Future<int> findPostsCount(List<String>? tagsArg) async {
-    List<String> tags = tagsArg ?? <String>[];
-
-    final url = createUrl(countUrl, params: {'limit': '1', 'tags': tags.join('+')});
-    log.d('getPostsCount', url);
-
-    String json = '';
-
-    try {
-      if (useTagsXml) {
-        json = await getXml(url);
-      } else {
-        json = await getJson(url);
-      }
-    } catch(e) {
-      log.e('getPostsCount', e);
-    }
-
-    try {
-      final data = jsonDecode(json);
-      final count = data['counts']['posts'];
-      return count;
-    } catch(e) {
-      log.e('getPostsCount', e);
-    }
-
-    return -1;
-  }
-
-  @override
   Future<List<Post?>> findParents(int id) async {
     try {
       var uri = createUrl(imageUrl, params: {'parent': '$id'});
@@ -134,9 +104,10 @@ abstract class ABooru extends IBooru {
     late Uri uri;
     switch(type) {
       case BooruType.danbooru:
-        uri = createUrl(imageUrl, path: 'posts/$id.json');
+        uri = createUrl(imageUrl.replace(path: ''), path: 'posts/$id.json');
         break;
       case BooruType.gelbooru:
+      case BooruType.gelbooru2:
         uri = createUrl(imageUrl, params: {
           'page': 'dapi',
           'json': '1',
@@ -174,6 +145,36 @@ abstract class ABooru extends IBooru {
     return getPosts(obj2)[0];
   }
 
+  @override
+  Future<int> findPostsCount(List<String>? tagsArg) async {
+    List<String> tags = tagsArg ?? <String>[];
+
+    final url = createUrl(countUrl, params: {'limit': '1', 'tags': tags.join('+')});
+    log.d('getPostsCount', url);
+
+    String json = '';
+
+    try {
+      if (useTagsXml) {
+        json = await getXml(url);
+      } else {
+        json = await getJson(url);
+      }
+    } catch(e) {
+      log.e('getPostsCount', e);
+    }
+
+    try {
+      final data = jsonDecode(json);
+      final count = data['counts']['posts'];
+      return count;
+    } catch(e) {
+      log.e('getPostsCount', e);
+    }
+
+    return -1;
+  }
+
   //endregion
 
   //region Tags
@@ -187,7 +188,7 @@ abstract class ABooru extends IBooru {
     Map<String, String> params = getTagsParams(tagName);
 
     var url = createUrl(tagUrl, params: params);
-    log.d('getTagsAsync', url);
+    log.d(type.value, name, 'findTags', url);
 
     late String response;
     if (useTagsXml) {
@@ -196,9 +197,12 @@ abstract class ABooru extends IBooru {
       response = await getJson(url);
     }
 
-    var list = jsonDecode(response);
+    var data = jsonDecode(response);
+    if (data is List) {
+      return getTags(data);
+    }
 
-    return getTags(list);
+    return getTags(data['tag']);
   }
 
   @override

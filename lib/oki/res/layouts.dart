@@ -24,6 +24,7 @@ class OkiDropDown extends StatelessWidget {
       cursor: SystemMouseCursors.click,
       child: DropdownButton(
         value: value,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         disabledHint: Text(value),
         items: temp,
         onChanged: onChanged,

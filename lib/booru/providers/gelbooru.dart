@@ -43,7 +43,7 @@ class Hypnohub extends IGelBooru {
 class Real extends IGelBooru {
   static const String name_ = 'Real';
 
-  Real() : super(options: [BooruOptions.tagApiXml, ]);
+  Real() : super(options: [BooruOptions.tagApiXml, ], type: BooruType.gelbooru);
 
   @override
   String get name => name_;
@@ -89,7 +89,7 @@ class Rule34 extends IGelBooru {
 class Safebooru extends IGelBooru2 {
   static const String name_ = 'Safe';
 
-  Safebooru() : super(options: [BooruOptions.tagApiXml, BooruOptions.generalRating,]);
+  Safebooru() : super(options: []);
 
   @override
   String get name => name_;
@@ -146,7 +146,7 @@ class GelbooruTemplate2 extends IGelBooru2 {
   final String home_;
   final String name_;
 
-  GelbooruTemplate2(this.name_, this.base, this.home_) {
+  GelbooruTemplate2(this.name_, this.base, this.home_, {required super.options}) {
     isPersonalizado = true;
   }
 

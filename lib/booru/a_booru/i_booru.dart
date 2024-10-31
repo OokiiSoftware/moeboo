@@ -23,9 +23,15 @@ abstract class IBooru {
 
   final BooruType type;
   late BooruOpt options;
-  late Uri baseUrl, countUrl, imageUrl, tagUrl;
+  Uri get baseUrl => Uri(
+    scheme: useHttp ? 'http' :'https',
+    host: domain,
+  );
+  Uri get countUrl;
+  Uri get imageUrl;
+  Uri get tagUrl;
 
-  static Random random = Random();
+  static final random = Random();
 
   bool get isDanbooru => type.isDan;
   bool get isGelbooru => type.isGeo;
@@ -35,21 +41,22 @@ abstract class IBooru {
   bool get isDeviant => type.isDev;
   bool get isEHentai => type.isHen;
   bool get isKemono => type.isKem;
+  // bool get isReal => type.isReal;
 
   //endregion
 
   IBooru(this.type, {List<BooruOptions>? options}) {
     this.options = BooruOpt(options);
 
-    if (this.options.contains(BooruOptions.http)) {
-      baseUrl = Uri.http(domain, '');
-    } else {
-      baseUrl = Uri.https(domain, '');
-    }
+    // if (useHttp) {
+    //   baseUrl = Uri.http(domain, '');
+    // } else {
+    //   baseUrl = Uri.https(domain, '');
+    // }
 
-    countUrl = _createPathLink('counts/posts');
-    imageUrl = _createPathLink('post');
-    tagUrl = _createPathLink('tag');
+    // countUrl = _createPathLink('counts/posts');
+    // imageUrl = _createPathLink('post');
+    // tagUrl = _createPathLink('tag');
   }
 
   //region get
@@ -215,35 +222,36 @@ abstract class IBooru {
   }
 
 
-  @protected
-  Uri _createPathLink(String query, [String squery = "index"]) {
-    String queryString;
+  /*@protected
+  Uri _createPathLink(String query, [String squery = 'index']) {
+    String queryString = '';
 
     switch (type) {
-      case BooruType.moeBooru:
-        queryString = "$query/$squery.json";
-        break;
-      case BooruType.gelbooru:
-        queryString = "index.php";
-        break;
-      case BooruType.danbooru:
-        queryString = query == "related_tag" ? "$query.json" : "${query}s.json";
-        break;
-      case BooruType.kemono:
-        queryString = "api/v1/${query}s";
-        break;
-      case BooruType.sankaku:
-        queryString = query == "wiki" ? query : "${query}s";
-        break;
-      case BooruType.artStation:
-        queryString = 'projects.json';
-        break;
+      // case BooruType.moeBooru:
+      //   queryString = '$query/$squery.json';
+      //   break;
+      // case BooruType.gelbooru:
+      //   queryString = '$squery.php';
+      //   break;
+      // case BooruType.danbooru:
+      //   queryString = query == 'related_tag' ? '$query.json' : '${query}s.json';
+      //   break;
+      // case BooruType.kemono:
+      //   queryString = 'api/v1/${query}s';
+      //   break;
+      // case BooruType.sankaku:
+      //   queryString = '${query}s';
+      //   break;
+      // case BooruType.artStation:
+      //   queryString = 'projects.json';
+      //   break;
 
       default:
         return baseUrl;
     }
+
     return newUri(queryString);
-  }
+  }*/
 
   @protected
   Uri createUrl(Uri url, {String? path, List<String>? rating, Map<String, dynamic>? params}) {
