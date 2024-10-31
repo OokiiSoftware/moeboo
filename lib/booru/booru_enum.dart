@@ -10,6 +10,7 @@ class BooruType {
   static const String artValue = 'ArtStation';
   static const String danValue = 'Danbooru';
   static const String devValue = 'Deviant';
+  static const String e621Value = 'E621';
   static const String gelValue = 'Gelbooru';
   static const String gelValue2 = 'Gelbooru 2';
   static const String henValue = 'EHEntai';
@@ -18,13 +19,16 @@ class BooruType {
   static const String kemValue = 'Kemono';
 
   static const String cooValue = 'Coomer';
+  static const String cpValue = 'CreatePorn';
   static const String fapValue = 'Fapello';
+  // static const String realValue = 'Real';
   static const String xnxValue = 'Xnxx';
   static const String sexValue = 'Sex';
 
   static const BooruType artStation = BooruType(artValue);
   static const BooruType danbooru = BooruType(danValue);
   static const BooruType deviant = BooruType(devValue);
+  static const BooruType e621 = BooruType(e621Value);
   static const BooruType ehentai = BooruType(henValue);
   static const BooruType gelbooru = BooruType(gelValue);
   static const BooruType gelbooru2 = BooruType(gelValue2);
@@ -33,7 +37,9 @@ class BooruType {
   static const BooruType kemono = BooruType(kemValue);
 
   static const BooruType coomer = BooruType(cooValue);
+  static const BooruType createPorn = BooruType(cpValue);
   static const BooruType fapello = BooruType(fapValue);
+  // static const BooruType real = BooruType(realValue);
   static const BooruType xnxx = BooruType(xnxValue);
   static const BooruType sex = BooruType(sexValue);
 
@@ -43,7 +49,9 @@ class BooruType {
 
   /// Somente os que podem criar novos boorus
   static const List<String> templateValues = [
+    cpValue,
     danValue,
+    e621Value,
     gelValue,
     gelValue2,
     moeValue,
@@ -51,7 +59,9 @@ class BooruType {
 
   /// Somente os que podem criar novos boorus
   static const List<BooruType> templates = [
+    createPorn,
     danbooru,
+    e621,
     gelbooru,
     gelbooru2,
     moeBooru,
@@ -67,6 +77,8 @@ class BooruType {
         return BooruType.deviant;
       case henValue:
         return BooruType.ehentai;
+      case e621Value:
+        return BooruType.e621;
       case gelValue:
         return BooruType.gelbooru;
       case gelValue2:
@@ -75,6 +87,8 @@ class BooruType {
         return BooruType.sankaku;
       case kemValue:
         return BooruType.kemono;
+      case cpValue:
+        return BooruType.createPorn;
       default:
         return BooruType.moeBooru;
     }
@@ -84,22 +98,27 @@ class BooruType {
   bool get isDan => value == danValue;
   bool get isDev => value == devValue;
   bool get isHen => value == henValue;
+  bool get isE621 => value == e621Value;
   bool get isGeo => value == gelValue;
   bool get isGeo2 => value == gelValue2;
   bool get isMoe => value == moeValue;
   bool get isSan => value == sanValue;
   bool get isKem => value == kemValue;
+  // bool get isReal => value == realValue;
 
+  bool get isCP => value == cpValue;
   bool get isCoo => value == cooValue;
   bool get isSex => value == sexValue;
   bool get isFap => value == fapValue;
   bool get isXnx => value == xnxValue;
 
   int get index {
-    if (isDan) return 0;
-    if (isGeo) return 1;
-    if (isGeo2) return 2;
-    if (isMoe) return 3;
+    if (isCP) return 0;
+    if (isDan) return 1;
+    if (isE621) return 2;
+    if (isGeo) return 3;
+    if (isGeo2) return 4;
+    if (isMoe) return 5;
 
     return -1;
   }

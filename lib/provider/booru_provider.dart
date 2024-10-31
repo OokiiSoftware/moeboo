@@ -99,9 +99,22 @@ class BooruProvider extends ChangeNotifier {
           value.nome,
           value.baseUrl,
           value.homeUrl,
+          options: [],
         );
       case BooruType.moeBooru:
         return MoebooruTemplate(
+          value.nome,
+          value.baseUrl,
+          value.homeUrl,
+        );
+      case BooruType.e621:
+        return E621Template(
+          value.nome,
+          value.baseUrl,
+          value.homeUrl,
+        );
+      case BooruType.createPorn:
+        return CreatePornTemplate(
           value.nome,
           value.baseUrl,
           value.homeUrl,
@@ -176,12 +189,16 @@ class Boorus {
     EHentai.name_: EHentai(),
     Hypnohub.name_: Hypnohub(),
     Kemono.name_: Kemono(),
-    Lolibooru.name_: Lolibooru(),
+    // Lolibooru.name_: Lolibooru(),
     Rule34.name_: Rule34(),
     Sakugabooru.name_: Sakugabooru(),
     XBooru.name_: XBooru(),
 
     Coomer.name_: Coomer(),
+    // AiPorn.name_: AiPorn(),
+    // AiHentai.name_: AiHentai(),
+    // AiAsian.name_: AiAsian(),
+    // AiShemale.name_: AiShemale(),
     Fapello.name_: Fapello(),
     Real.name_: Real(),
     IdolComplex.name_: IdolComplex(),
