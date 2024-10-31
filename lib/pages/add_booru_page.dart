@@ -38,6 +38,9 @@ class _State extends State<AddBooruPage> {
 
   @override
   Widget build(BuildContext context) {
+    final boorus = Boorus.optionals.values.toList();
+    boorus.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+
     return Scaffold(
       appBar: AppBar(
         title: Text(ui.titleAddBooru),
@@ -141,9 +144,10 @@ class _State extends State<AddBooruPage> {
                 ],
               ),
             ),
-          ),
+          ),  // form
 
           const Divider(),
+
           Center(
             child: Text(ui.preConfig),
           ),
@@ -154,7 +158,7 @@ class _State extends State<AddBooruPage> {
             padding: const EdgeInsets.only(bottom: 80),
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, i) {
-              final item = Boorus.optionals.values.toList()[i];
+              final item = boorus[i];
 
               return SwitchListTile(
                 title: Text(item.name),
