@@ -60,7 +60,7 @@ class LinkConsert {
   static String tryConsert(Post post) {
     var source = post.source ?? '';
 
-    if (source.isNotEmpty) {
+    if (source.isNotEmpty && source.contains('http')) {
       if (post.booru.isKemono) {
         return source.substring(0, source.length-1);
       }
