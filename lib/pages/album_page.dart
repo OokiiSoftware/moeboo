@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:showcaseview/showcaseview.dart';
@@ -53,7 +55,7 @@ class _State extends State<AlbumPage> with TickerProviderStateMixin {
   final List<PostG> _posts = [];
 
   final ScrollController _cFragments = ScrollController();
-  final ScrollController _cMain = ScrollController();
+  // final ScrollController _cMain = ScrollController();
   final RefreshController _cRefresh = RefreshController();
   final PageController _cPage = PageController();
   late AnimationController _cAnimation;
@@ -98,6 +100,14 @@ class _State extends State<AlbumPage> with TickerProviderStateMixin {
   late Animation<double> opacityAnimation;
   late Animation<double> scaleAnimation;
 
+  void Function()? appBarSetState;
+
+  /// Há um bug em [_cRefresh.position] em que o listener é removido.
+  /// Essas duas variaveis servem pra resolver o problema.
+  Timer? _timerScrollPosition;
+  /// Armazena o hashCode do [_cRefresh.position] atual.
+  int _currentScrollPosition = 0;
+
   //endregion
 
   //region widgets
@@ -109,9 +119,9 @@ class _State extends State<AlbumPage> with TickerProviderStateMixin {
 
     _addListeners(false);
 
-    _cFragments.dispose();
+    // _cFragments.dispose();
     _cRefresh.dispose();
-    _cMain.dispose();
+    // _cMain.dispose();
     _cAnimation.dispose();
     _cPage.dispose();
   }
@@ -158,7 +168,7 @@ class _State extends State<AlbumPage> with TickerProviderStateMixin {
   }
 
   @override
-  Widget build(BuildContext context) {print(widget.album.id);
+  Widget build(BuildContext context) {
     return ChangeNotifierProvider.value(
       value: widget.album,
       builder: (context, o) {
@@ -421,7 +431,7 @@ class _State extends State<AlbumPage> with TickerProviderStateMixin {
         },
       ),
       child: CustomScrollView(
-        controller: _cMain,
+        // controller: _cMain,
         physics: const AlwaysScrollableScrollPhysics(
           parent: BouncingScrollPhysics(),
         ),
@@ -431,7 +441,7 @@ class _State extends State<AlbumPage> with TickerProviderStateMixin {
           SliverToBoxAdapter(
             child: PostsFragment(
               posts: _posts,
-              controller: _cFragments,
+              // controller: _cFragments,
               showOnline: showOnline.value,
               showBooruOptions: !_inProgress,
               gridMode: postsLatoyt == 0,
@@ -465,47 +475,54 @@ class _State extends State<AlbumPage> with TickerProviderStateMixin {
       builder: (context) {
         context3 = context;
 
-        return AnimatedPositioned(
-          duration: _animDuration,
-          top: _showAppBar ? (isMobile ? 25 : 0) : -100,
-          child: Container(
-            height: appBarHeight,
-            width: width - 20,
-            padding: const EdgeInsets.symmetric(vertical: 2),
-            margin: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(50),
-            ),
-            child: OkiStatefulBuilder(
-              dispose: (setState) => _selectedPosts.removeListener(setState),
-              builder: (context, setState, state) {
-                _selectedPosts.addListener(setState);
+        return OkiStatefulBuilder(
+          initialize: (setState) {
+            appBarSetState = setState;
+          },
+          builder: (context, setState, state) {
+            return AnimatedPositioned(
+              duration: _animDuration,
+              top: _showAppBar ? (isMobile ? 25 : 0) : -100,
+              child: Container(
+                height: appBarHeight,
+                width: width - 20,
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                margin: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                child: OkiStatefulBuilder(
+                  dispose: (setState) => _selectedPosts.removeListener(setState),
+                  builder: (context, setState, state) {
+                    _selectedPosts.addListener(setState);
 
-                return Stack(
-                  alignment: Alignment.topCenter,
-                  children: [
-                    AnimatedPositioned(
-                      top: _inSelectMode ? -appBarPosition : 0,
-                      left: 10,
-                      height: appBarHeight,
-                      width: width - 40,
-                      duration: _animDuration,
-                      child: _appBarNormal(),
-                    ), // normal mode
+                    return Stack(
+                      alignment: Alignment.topCenter,
+                      children: [
+                        AnimatedPositioned(
+                          top: _inSelectMode ? -appBarPosition : 0,
+                          left: 10,
+                          height: appBarHeight,
+                          width: width - 40,
+                          duration: _animDuration,
+                          child: _appBarNormal(),
+                        ), // normal mode
 
-                    AnimatedPositioned(
-                      top: _inSelectMode ? 0 : appBarPosition,
-                      height: appBarHeight,
-                      width: width - 60,
-                      duration: _animDuration,
-                      child: _appBarOptions(),
-                    ), // Select mode
-                  ],
-                );
-              },
-            ),
-          ),
+                        AnimatedPositioned(
+                          top: _inSelectMode ? 0 : appBarPosition,
+                          height: appBarHeight,
+                          width: width - 60,
+                          duration: _animDuration,
+                          child: _appBarOptions(),
+                        ), // Select mode
+                      ],
+                    );
+                  },
+                ),
+              ),
+            );
+          },
         );
       },
     );
@@ -854,8 +871,6 @@ class _State extends State<AlbumPage> with TickerProviderStateMixin {
       showOnline.value = false;
     }
 
-    _addListeners(true);
-
     album.agrupar = usePostsGroup.value;
 
     _cAnimation = AnimationController(
@@ -874,6 +889,8 @@ class _State extends State<AlbumPage> with TickerProviderStateMixin {
     }
 
     _updateLocalList();
+
+    _addListeners(true);
 
     _setInProgress(false);
 
@@ -967,7 +984,7 @@ class _State extends State<AlbumPage> with TickerProviderStateMixin {
       _cRefresh.footerMode?.setValueWithNoNotify(LoadStatus.failed);
     }
 
-    _updateLocalList();
+    _updateLocalList(false);
 
     if (usePage) {
       final int newPage = _albumRead.maxPage;
@@ -1623,11 +1640,18 @@ class _State extends State<AlbumPage> with TickerProviderStateMixin {
     final album = widget.album;
 
     if (value) {
+      _timerScrollPosition = Timer.periodic(const Duration(seconds: 1), (timer) {
+        if (_currentScrollPosition != _cRefresh.position?.hashCode) {
+          _currentScrollPosition = _cRefresh.position?.hashCode ?? 0;
+
+          _cRefresh.position?.addListener(_scrollListener);
+        }
+      });
+
       database.child(Childs.booru).addListener(_onBooruChanged);
       database.child(Childs.rating).addListener(_onRattingChanged);
 
       _cRefresh.footerMode?.addListener(_refreshListener);
-      _cFragments.addListener(_scrollListener);
 
       album.addListener(_onAlbumChanged);
       album.onTagsChanged = () => _updatePosts(clearData: true);
@@ -1636,11 +1660,14 @@ class _State extends State<AlbumPage> with TickerProviderStateMixin {
       usePostsGroup.onChanged = _setState;
       showOnline.onChanged = _setState;
     } else {
+      _timerScrollPosition?.cancel();
+      _timerScrollPosition = null;
+
       database.child(Childs.booru).removeListener(_onBooruChanged);
       database.child(Childs.rating).removeListener(_onRattingChanged);
 
       _cRefresh.footerMode?.removeListener(_refreshListener);
-      _cFragments.removeListener(_scrollListener);
+      _cRefresh.position?.removeListener(_scrollListener);
 
       album.removeListener(_onAlbumChanged);
       album.onNoMoreResults =
@@ -1653,7 +1680,7 @@ class _State extends State<AlbumPage> with TickerProviderStateMixin {
 
   /// É chamado quanto tem alteração no album
   /// se [gotoInit] == true a lista volta pro topo
-  void _updateLocalList([bool gotoInit = true]) {
+  void _updateLocalList([bool gotoInit = true]) async {
     _posts.clear();
     final album = _albumRead;
 
@@ -1663,39 +1690,41 @@ class _State extends State<AlbumPage> with TickerProviderStateMixin {
       _posts.addAll(album.getGroup(showOnline.value));
     }
 
-    if (gotoInit && _cMain.hasClients) {
+    _setState();
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    if (gotoInit) {
       try {
-        _cMain.animateTo(0, duration: _animDuration, curve: Curves.fastOutSlowIn);
+        _cRefresh.position?.animateTo(0, duration: _animDuration, curve: Curves.fastOutSlowIn);
       } catch(e) {
         _log.e('_onPageChanged', e);
       }
     }
-    _setState();
+
   }
 
-  double _scrollOffset = 0;
   void _scrollListener() {
-    if (_cFragments.offset < 0) return;
+    final direction = _cRefresh.position?.userScrollDirection ?? ScrollDirection.idle;
+    if (direction == ScrollDirection.idle) return;
 
-    if (_scrollOffset > _cFragments.offset) {
+    if (direction == ScrollDirection.forward) {
       _onScrollUp();
     } else {
       _onScrollDown();
     }
-
-    _scrollOffset = _cFragments.offset;
   }
 
   void _onScrollUp() {
     if (!_showAppBar) {
       _showAppBar = true;
-      _setState();
+      appBarSetState?.call();
     }
   }
+
   void _onScrollDown() {
     if (_showAppBar) {
       _showAppBar = false;
-      _setState();
+      appBarSetState?.call();
     }
   }
 
